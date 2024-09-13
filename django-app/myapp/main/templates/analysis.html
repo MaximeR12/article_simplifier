@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Text analysis</title>
+{% endblock  %}
+
+{% block body %}
+
+{% if prediction_done == False %}
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+            <label for="username">Text to analyse :</label>
+            <input type="text" class="form-control" name="input_text" placeholder="Write or paste your text to analyse">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Result language :</label>
+            <input type="text" class="form-control" name="output_language" placeholder="Chose your wanted language for your result">
+          </div>
+          
+          <button type="submit" class="btn btn-primary">Analyse</button>
+</form>
+{% endif %}
+
+{% if prediction_done %}
+<p>{{output}}</p>
+{% endif %}
+
+{% endblock body %}
