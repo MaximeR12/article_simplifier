@@ -1,0 +1,100 @@
+name: CD
+
+on:
+  push:
+    branches: 
+    - main 
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build and Push Docker Images using Docker Compose
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      run: |
+        echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        docker compose build
+        docker compose push
+
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy API IA to Azure Container Instances
+      uses: azure/aci-deploy@v1
+      with:
+        resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
+        dns-name-label: llm-api
+        image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/llm-api:latest
+        registry-login-server: docker.io
+        registry-username: ${{ secrets.DOCKERHUB_USERNAME }}
+        registry-password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        name: llm-api
+        location: ${{ secrets.AZ_LOCATION }}
+        ports: '8001'
+        secure-environment-variables: |
+          DB_SERVER=${{ secrets.DB_SERVER }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DJANGO_USE_DATABASE=${{ secrets.DJANGO_USE_DATABASE }}
+          DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}
+          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+    
+    - name: Deploy API Database to Azure Container Instances
+      uses: azure/aci-deploy@v1
+      with:
+        resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
+        dns-name-label: db-api
+        image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/db-api:latest
+        registry-login-server: docker.io
+        registry-username: ${{ secrets.DOCKERHUB_USERNAME }}
+        registry-password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        name: db-api
+        location: ${{ secrets.AZ_LOCATION }}
+        ports: '8000'
+        secure-environment-variables: |
+          DB_SERVER=${{ secrets.DB_SERVER }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+              
+    - name: Deploy Web app  to Azure Container Instances
+      uses: azure/aci-deploy@v1
+      with:
+        resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
+        dns-name-label: django-app
+        image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest
+        registry-login-server: docker.io
+        registry-username: ${{ secrets.DOCKERHUB_USERNAME }}
+        registry-password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        name: django-app
+        location: ${{ secrets.AZ_LOCATION }}
+        ports: '8002'
+        secure-environment-variables: |
+          DB_SERVER=${{ secrets.DB_SERVER }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DJANGO_USE_DATABASE=${{ secrets.DJANGO_USE_DATABASE }}
+          DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}
+          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+
+    

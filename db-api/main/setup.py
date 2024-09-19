@@ -1,1 +1,0 @@
-env_path = "../.env"

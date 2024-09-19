@@ -1,12 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from setup import env_path
 import psycopg2
 from dotenv import load_dotenv
 import os
 
 # Load the environment variables from the .env file
-load_dotenv(env_path)
+load_dotenv()
 
 # Get the database connection details from the environment variables
 db_name = os.getenv('DB_NAME')
@@ -130,3 +129,5 @@ async def delete_article(article_id: int):
     cursor.execute("DELETE FROM article WHERE id = %s", (article_id,))
     connection.commit()
     return {"message": "Article deleted"}
+
+# to run from article_simplifier folder: uvicorn db-api.main.main:app --reload

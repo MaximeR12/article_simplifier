@@ -1,0 +1,72 @@
+name: CI 
+
+on:
+  push:
+    branches:
+    - main 
+permissions:
+  contents: write
+jobs: 
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout code 
+        uses: actions/checkout@v2 
+
+      - name: Set up Python 
+        uses: actions/setup-python@v2
+        with: 
+          python-version: '3.10'
+
+      - name: Install requirements 
+        run: pip install -r requirements.txt
+
+      - name: Set up environment variables
+        run: |
+          echo "AZ_USERNAME=${{ secrets.AZ_USERNAME }}" >> $GITHUB_ENV
+          echo "AZ_PASSWORD=${{ secrets.AZ_PASSWORD }}" >> $GITHUB_ENV
+          echo "AZ_LOCATION=${{ secrets.AZ_LOCATION }}" >> $GITHUB_ENV
+          echo "AZ_RESOURCE_GROUP=${{ secrets.AZ_RESOURCE_GROUP }}" >> $GITHUB_ENV
+          echo "DB_DRIVER"=${{ secrets.DB_DRIVER}}
+          echo "DB_SERVER=${{ secrets.DB_SERVER }}" >> $GITHUB_ENV
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
+          echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
+          echo "DJANGO_USE_DATABASE=${{ secrets.DJANGO_USE_DATABASE }}" >> $GITHUB_ENV
+          echo "DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}" >> $GITHUB_ENV
+          echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> $GITHUB_ENV &&
+
+      - name: Run Test 
+        run: pytest -v 
+
+      - name: Run Django Tests
+        working-directory: web_app
+        run: python manage.py test
+  deploy-doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.10.13
+      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV 
+
+
+      - uses: actions/cache@v4
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: .cache
+          restore-keys: |
+            mkdocs-material-
+      - run: pip install -r docs/requirements-doc.txt
+
+      - run: mkdocs build
+      - run: mkdocs gh-deploy --force
