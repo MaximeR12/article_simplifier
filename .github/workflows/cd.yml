@@ -74,7 +74,7 @@ jobs:
           DB_PORT=${{ secrets.DB_PORT }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
               
-    - name: Deploy Web app  to Azure Container Instances
+    - name: Deploy Web app to Azure Container Instances
       uses: azure/aci-deploy@v1
       with:
         resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}

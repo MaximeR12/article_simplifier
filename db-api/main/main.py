@@ -1,8 +1,10 @@
+import psycopg2
+import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import psycopg2
 from dotenv import load_dotenv
-import os
+from typing import Optional
+from datetime import timedelta
 
 # Load the environment variables from the .env file
 load_dotenv()
@@ -41,6 +43,14 @@ class Article(BaseModel):
     title: str
     content: str
     language: str
+
+# Define a Pydantic model for the LLM Call Log
+class LLMCallLog(BaseModel):
+    model: str
+    input: str
+    output: str
+    response_time: timedelta
+    user_satisfaction: Optional[int] = None
 
 # Create a new analysis (CREATE)
 @app.post("/analysis/")
@@ -129,5 +139,15 @@ async def delete_article(article_id: int):
     cursor.execute("DELETE FROM article WHERE id = %s", (article_id,))
     connection.commit()
     return {"message": "Article deleted"}
+
+# Create a new LLM call log
+@app.post("/llm_call_log/")
+async def create_llm_call_log(log: LLMCallLog):
+    cursor.execute("""
+        INSERT INTO llm_call_logs (model, input, output, response_time, user_satisfaction)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (log.model, log.input, log.output, log.response_time, log.user_satisfaction))
+    connection.commit()
+    return {"message": "LLM call log created"}
 
 # to run from article_simplifier folder: uvicorn db-api.main.main:app --reload

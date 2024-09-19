@@ -14,5 +14,5 @@ WORKDIR /app/django-app
 
 #RUN python myapp/manage.py collectstatic --noinput
 
-EXPOSE 8000
+EXPOSE 8002
 CMD ["gunicorn", "--config", "django_guni_config.py", "myapp.wsgi:application"]

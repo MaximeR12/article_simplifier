@@ -1,7 +1,6 @@
 import os
 import psycopg2
 from dotenv import load_dotenv, find_dotenv
-from .setup import env_path
 
 # Get the database connection details from the environment variables
 load_dotenv(find_dotenv())
@@ -43,6 +42,19 @@ cursor.execute("""
         content TEXT,
         language TEXT,
         timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    )
+""")
+
+# LLM call logs table creation
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS llm_call_logs (
+        id SERIAL PRIMARY KEY,
+        timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        model TEXT NOT NULL,
+        input TEXT NOT NULL,
+        output TEXT NOT NULL,
+        response_time INTERVAL NOT NULL,
+        user_satisfaction INTEGER
     )
 """)
 
