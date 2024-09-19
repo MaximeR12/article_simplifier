@@ -2,17 +2,17 @@ FROM python:3.10.9
 
 WORKDIR /app  
 
-# Copy the requirements file from the root directory
-COPY ../requirements.txt /app/requirements.txt
+# Copy the djangorequirements.txt file from the current directory
+COPY djangorequirements.txt /app/requirements.txt
 
 RUN pip install -r requirements.txt  
 
 # Copy the django-app contents
-COPY . /app/django-app
+COPY . /app
 
-WORKDIR /app/django-app
+WORKDIR /app/myapp
 
 #RUN python myapp/manage.py collectstatic --noinput
 
 EXPOSE 8002
-CMD ["gunicorn", "--config", "django_guni_config.py", "myapp.wsgi:application"]
+CMD ["gunicorn", "--config", "../django_guni_config.py", "myapp.wsgi:application"]
