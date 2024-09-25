@@ -1,20 +1,32 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim-buster
+FROM python:3.9
+
+# Install Ollama
+RUN curl https://ollama.ai/install.sh | sh
 
 # Set the working directory in the container to /app
 WORKDIR /app
 
-# Add the current directory contents into the container at /app
-ADD . /app
+# Copy the current directory contents into the container at /app
+COPY . .
 
 # Install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r llmrequirements.txt
 
-# Make port 80 available to the world outside this container
+# Make port 8001 available to the world outside this container
 EXPOSE 8001
 
-# Define environment variable
-ENV PORT 8001
+# Define environment variables
+ENV PORT=8001
+ENV OLLAMA_MODEL=llama3:8b
 
-# Run app.main() when the container launches
-CMD ["uvicorn", "main.main:app", "--host", "0.0.0.0", "--port", "8001"]
+# Create a startup script
+RUN echo '#!/bin/bash\n\
+ollama serve &\n\
+sleep 10\n\
+ollama pull $OLLAMA_MODEL\n\
+uvicorn main.main:app --host 0.0.0.0 --port $PORT\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
+# Run the startup script when the container launches
+CMD ["/app/start.sh"]
