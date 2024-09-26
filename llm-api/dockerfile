@@ -25,7 +25,7 @@ RUN echo '#!/bin/bash\n\
 ollama serve &\n\
 sleep 10\n\
 ollama pull $OLLAMA_MODEL\n\
-uvicorn main.main:app --host 0.0.0.0 --port $PORT\n\
+uvicorn main.main:app --host 0.0.0.0 --port 8001\n\
 ' > /app/start.sh && chmod +x /app/start.sh
 
 # Run the startup script when the container launches

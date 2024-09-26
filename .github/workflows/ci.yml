@@ -38,6 +38,7 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
           echo "DJANGO_USE_DATABASE=${{ secrets.DJANGO_USE_DATABASE }}" >> $GITHUB_ENV
           echo "DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}" >> $GITHUB_ENV
+          echo "DB_API_TOKEN=${{ secrets.DB_API_TOKEN }}" >> $GITHUB_ENV
           echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> $GITHUB_ENV &&
 
       - name: Run Test 

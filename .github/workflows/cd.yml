@@ -35,12 +35,12 @@ jobs:
       uses: azure/aci-deploy@v1
       with:
         resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
-        dns-name-label: llm-api
+        dns-name-label: mrowell-llm-api
         image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/llm-api:latest
         registry-login-server: docker.io
         registry-username: ${{ secrets.DOCKERHUB_USERNAME }}
         registry-password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        name: llm-api
+        name: mrowell-llm-api
         location: ${{ secrets.AZ_LOCATION }}
         ports: '8001'
         secure-environment-variables: |
@@ -58,12 +58,12 @@ jobs:
       uses: azure/aci-deploy@v1
       with:
         resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
-        dns-name-label: db-api
+        dns-name-label: mrowell-db-api
         image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/db-api:latest
         registry-login-server: docker.io
         registry-username: ${{ secrets.DOCKERHUB_USERNAME }}
         registry-password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        name: db-api
+        name: mrowell-db-api
         location: ${{ secrets.AZ_LOCATION }}
         ports: '8000'
         secure-environment-variables: |
@@ -78,12 +78,12 @@ jobs:
       uses: azure/aci-deploy@v1
       with:
         resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
-        dns-name-label: django-app
+        dns-name-label: mrowell-django-app
         image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest
         registry-login-server: docker.io
         registry-username: ${{ secrets.DOCKERHUB_USERNAME }}
         registry-password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        name: django-app
+        name: mrowell-django-app
         location: ${{ secrets.AZ_LOCATION }}
         ports: '8002'
         secure-environment-variables: |
