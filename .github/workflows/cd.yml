@@ -44,15 +44,10 @@ jobs:
         location: ${{ secrets.AZ_LOCATION }}
         ports: '8001'
         secure-environment-variables: |
-          DB_SERVER=${{ secrets.DB_SERVER }}
-          DB_NAME=${{ secrets.DB_NAME }}
-          DB_USER=${{ secrets.DB_USER }}
-          DB_HOST=${{ secrets.DB_HOST }}
-          DB_PORT=${{ secrets.DB_PORT }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          DJANGO_USE_DATABASE=${{ secrets.DJANGO_USE_DATABASE }}
-          DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}
-          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+          DB_API_TOKEN=${{ secrets.DB_API_TOKEN }}
+          DB_API_URL=${{ secrets.DB_API_URL }}
+          OLLAMA_MODEL=${{ secrets.OLLAMA_MODEL }}
+          ADMIN_TOKEN=${{ secrets.ADMIN_TOKEN }}
     
     - name: Deploy API Database to Azure Container Instances
       uses: azure/aci-deploy@v1
@@ -67,12 +62,13 @@ jobs:
         location: ${{ secrets.AZ_LOCATION }}
         ports: '8000'
         secure-environment-variables: |
-          DB_SERVER=${{ secrets.DB_SERVER }}
           DB_NAME=${{ secrets.DB_NAME }}
           DB_USER=${{ secrets.DB_USER }}
           DB_HOST=${{ secrets.DB_HOST }}
           DB_PORT=${{ secrets.DB_PORT }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_API_TOKEN=${{ secrets.DB_API_TOKEN }}
+          DB_API_URL=${{ secrets.DB_API_URL }}
               
     - name: Deploy Web app to Azure Container Instances
       uses: azure/aci-deploy@v1
