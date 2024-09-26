@@ -1,6 +1,6 @@
 import psycopg2
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, Header
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from typing import Optional
@@ -14,6 +14,12 @@ db_name = os.getenv('DB_NAME')
 db_user = os.getenv('DB_USER')
 db_password = os.getenv('DB_PASSWORD')
 db_host = os.getenv('DB_HOST')
+api_token = os.getenv('DB_API_TOKEN')
+
+# Dependency to verify the token
+def verify_token(x_token: str = Header(...)):
+    if x_token != api_token:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 # Establish a connection to the database
 connection = psycopg2.connect(
@@ -53,7 +59,7 @@ class LLMCallLog(BaseModel):
     user_satisfaction: Optional[int] = None
 
 # Create a new analysis (CREATE)
-@app.post("/analysis/")
+@app.post("/analysis/", dependencies=[Depends(verify_token)])
 async def create_analysis(analysis: Analysis):
     cursor.execute("""
         INSERT INTO analysis (user_id, content, result, analysis_duration, is_satisfied)
@@ -63,14 +69,14 @@ async def create_analysis(analysis: Analysis):
     return {"message": "Analysis created"}
 
 # Get all analyses (READ)
-@app.get("/analysis/")
+@app.get("/analysis/", dependencies=[Depends(verify_token)])
 async def get_analyses():
     cursor.execute("SELECT * FROM analysis")
     rows = cursor.fetchall()
     return [{"id": row[0], "user_id": row[1], "content": row[2], "result": row[3], "timestamp": row[4], "analysis_duration": row[5], "is_satisfied": row[6]} for row in rows]
 
 # Get a specific analysis by ID (READ)
-@app.get("/analysis/{analysis_id}")
+@app.get("/analysis/{analysis_id}", dependencies=[Depends(verify_token)])
 async def get_analysis(analysis_id: int):
     cursor.execute("SELECT * FROM analysis WHERE id = %s", (analysis_id,))
     row = cursor.fetchone()
@@ -79,7 +85,7 @@ async def get_analysis(analysis_id: int):
     return {"id": row[0], "user_id": row[1], "content": row[2], "result": row[3], "timestamp": row[4], "analysis_duration": row[5], "is_satisfied": row[6]}
 
 # Update a specific analysis by ID (UPDATE)
-@app.put("/analysis/{analysis_id}")
+@app.put("/analysis/{analysis_id}", dependencies=[Depends(verify_token)])
 async def update_analysis(analysis_id: int, analysis: Analysis):
     cursor.execute("""
         UPDATE analysis
@@ -90,14 +96,14 @@ async def update_analysis(analysis_id: int, analysis: Analysis):
     return {"message": "Analysis updated"}
 
 # Delete a specific analysis by ID (DELETE)
-@app.delete("/analysis/{analysis_id}")
+@app.delete("/analysis/{analysis_id}", dependencies=[Depends(verify_token)])
 async def delete_analysis(analysis_id: int):
     cursor.execute("DELETE FROM analysis WHERE id = %s", (analysis_id,))
     connection.commit()
     return {"message": "Analysis deleted"}
 
 # Create a new article (CREATE)
-@app.post("/article/")
+@app.post("/article/", dependencies=[Depends(verify_token)])
 async def create_article(article: Article):
     cursor.execute("""
         INSERT INTO article (source, title, content, language)
@@ -107,14 +113,14 @@ async def create_article(article: Article):
     return {"message": "Article created"}
 
 # Get all articles (READ)
-@app.get("/article/")
+@app.get("/article/", dependencies=[Depends(verify_token)])
 async def get_articles():
     cursor.execute("SELECT * FROM article")
     rows = cursor.fetchall()
     return [{"id": row[0], "source": row[1], "title": row[2], "content": row[3], "language": row[4], "timestamp": row[5]} for row in rows]
 
 # Get a specific article by ID (READ)
-@app.get("/article/{article_id}")
+@app.get("/article/{article_id}", dependencies=[Depends(verify_token)])
 async def get_article(article_id: int):
     cursor.execute("SELECT * FROM article WHERE id = %s", (article_id,))
     row = cursor.fetchone()
@@ -123,7 +129,7 @@ async def get_article(article_id: int):
     return {"id": row[0], "source": row[1], "title": row[2], "content": row[3], "language": row[4], "timestamp": row[5]}
 
 # Update a specific article by ID (UPDATE)
-@app.put("/article/{article_id}")
+@app.put("/article/{article_id}", dependencies=[Depends(verify_token)])
 async def update_article(article_id: int, article: Article):
     cursor.execute("""
         UPDATE article
@@ -134,14 +140,14 @@ async def update_article(article_id: int, article: Article):
     return {"message": "Article updated"}
 
 # Delete a specific article by ID (DELETE)
-@app.delete("/article/{article_id}")
+@app.delete("/article/{article_id}", dependencies=[Depends(verify_token)])
 async def delete_article(article_id: int):
     cursor.execute("DELETE FROM article WHERE id = %s", (article_id,))
     connection.commit()
     return {"message": "Article deleted"}
 
 # Create a new LLM call log
-@app.post("/llm_call_log/")
+@app.post("/llm_call_log/", dependencies=[Depends(verify_token)])
 async def create_llm_call_log(log: LLMCallLog):
     cursor.execute("""
         INSERT INTO llm_call_logs (model, input, output, response_time, user_satisfaction)
@@ -149,5 +155,3 @@ async def create_llm_call_log(log: LLMCallLog):
     """, (log.model, log.input, log.output, log.response_time, log.user_satisfaction))
     connection.commit()
     return {"message": "LLM call log created"}
-
-# to run from article_simplifier folder: uvicorn db-api.main.main:app --reload

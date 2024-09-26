@@ -2,6 +2,7 @@ import ollama
 import json
 import os
 import secrets
+import requests
 from fastapi import FastAPI, Security, Response, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -9,6 +10,18 @@ import logging
 
 TOKENS_FILE = "../tokens.json"
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3:8b")
+DB_API_URL = os.getenv("DB_API_URL", "http://localhost:8000")
+DB_API_TOKEN = os.getenv("DB_API_TOKEN")
+
+def send_logs_to_db(logs):
+    headers = {
+        "x-token": DB_API_TOKEN,
+        "Content-Type": "application/json"
+    }
+    response = requests.post(os.getenv("DB_API_URL") + "/llm_call_log/", json=logs, headers=headers)
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Error sending logs to db")
+    
 
 def load_tokens():
     if os.path.exists(TOKENS_FILE):
@@ -74,10 +87,19 @@ async def ollama_chat(article: Script, language: str = "ENG", user_id: str = Dep
             }]
         )
         logger.debug(f"Ollama chat response received. Content length: {len(output['message']['content'])}")
-        return output['message']['content']
+        output = output['message']['content']
+        log_data = {
+            "model": OLLAMA_MODEL,
+            "input": article.script,
+            "output": output,
+            "response_time": "0:00:05.123456"
+        }
+        send_logs_to_db(log_data)
+        return output
     except Exception as e:
         logger.exception(f"Error processing request: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
+    
 
 @app.post("/create_token")
 async def create_token(admin_token: str, user_id: str):
