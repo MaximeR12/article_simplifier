@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Analysis Result</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Input Text</h5>
+            <p>{{ analysis.input_text }}</p>
+            <h5 class="card-title">Output ({{ analysis.output_language }})</h5>
+            <p>{{ analysis.output_text }}</p>
+        </div>
+    </div>
+    <a href="{% url 'analysis' %}" class="btn btn-primary mt-3">New Analysis</a>
+</div>
+{% endblock %}
