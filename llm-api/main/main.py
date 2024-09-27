@@ -3,7 +3,7 @@ import json
 import os
 import secrets
 import requests
-from fastapi import FastAPI, Security, Response, HTTPException, Depends
+from fastapi import FastAPI, Security, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 import logging
@@ -52,8 +52,8 @@ if not tokens:
 
 app = FastAPI()
 
-class Script(BaseModel):
-    script: str
+class Article(BaseModel):
+    article: str
 
 class Token(BaseModel):
     user_id : int
@@ -68,13 +68,12 @@ def authenticate(credentials: HTTPAuthorizationCredentials = Security(security))
         raise HTTPException(status_code=401, detail="Invalid token")
     return tokens[token]["user_id"]
 
-
 @app.post("/article_analyse")
-async def ollama_chat(article: Script, language: str = "ENG", user_id: str = Depends(authenticate)):
+async def ollama_chat(article: Article, language: str = "ENG", user_id: str = Depends(authenticate)):
     start_time = time.time()  # Start the timer
     try:
         logger.debug(f"Received request for article analysis. Language: {language}, User ID: {user_id}")
-        logger.debug(f"Article content: {article.script[:100]}...")  # Log first 100 characters of the article
+        logger.debug(f"Article content: {article.article[:100]}...")  # Log first 100 characters of the article
         logger.info(f"used model: {OLLAMA_MODEL}")
         output = ollama.chat(
             model=OLLAMA_MODEL,
@@ -82,7 +81,7 @@ async def ollama_chat(article: Script, language: str = "ENG", user_id: str = Dep
 
             Summarize the main points of the following article in 3-5 bullet points and translate into {language}. Provide only the translated bullet points. No additional text.
 
-            Article: {article.script}."""
+            Article: {article.article}."""
             }]
         )
         logger.debug(f"Ollama chat response received. Content length: {len(output['message']['content'])}")
@@ -90,7 +89,7 @@ async def ollama_chat(article: Script, language: str = "ENG", user_id: str = Dep
         response_time = time.time() - start_time  # Calculate the elapsed time
         log_data = {
             "model": OLLAMA_MODEL,
-            "input": article.script,
+            "input": article.article,
             "output": output,
             "response_time": f"{response_time:.6f}"  # Log the response time
         }

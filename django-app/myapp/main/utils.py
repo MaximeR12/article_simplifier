@@ -1,19 +1,18 @@
+import os
 import requests
+from dotenv import load_dotenv
 
-def analysis(input_text: str, output_language: str = 'ENG'):
-    api_url = "http://your-api-endpoint/analysis/"  # Replace with your actual API endpoint
-    
+load_dotenv()
+
+LLM_API_URL = os.getenv("LLM_API_URL", "http://mrowell-llm-api.francecentral.azurecontainer.io:8001")
+LLM_API_TOKEN = os.getenv("LLM_API_TOKEN")
+
+def analysis(input_text, output_language):
     payload = {
-        "content": input_text,
+        "article": input_text,
         "language": output_language
     }
-    
-    try:
-        response = requests.post(api_url, json=payload)
-        response.raise_for_status()  # Raise an exception for bad status codes
-        
-        result = response.json()
-        return result.get("result", "No result found")
-    except requests.RequestException as e:
-        print(f"An error occurred: {e}")
-        return "Error occurred while processing the request"
+    response = requests.post(f"{LLM_API_URL}/article_analyse/", json=payload, headers={"Authorization": f"Bearer {LLM_API_TOKEN}"})
+    print(response.status_code)
+    print(response.json())
+    return response.json()

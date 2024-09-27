@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
-chdir = "/app/myapp"
+chdir = "/django-app/myapp"
 bind = '0.0.0.0:8002'
 wsgi_app = "myapp.wsgi"
 workers = 4

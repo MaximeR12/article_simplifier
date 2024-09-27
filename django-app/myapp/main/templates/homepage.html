@@ -1,13 +1,49 @@
 {% extends 'base.html' %}
 
-{% block title %}
-<title>Bonjour monde !</title>
-{% endblock  %}
+{% block content %}
+<h1 class="text-center mb-4">Welcome to Text Analysis</h1>
+<p class="text-center mb-5">Analyze and translate text with ease using our powerful AI-driven tools.</p>
 
-{% block body %}
+{% if user.is_authenticated %}
+    <h2 class="mb-4">Recent Analyses</h2>
+    {% if items %}
+        <div class="row">
+        {% for item in items %}
+            <div class="col-md-6 mb-4">
+                <div class="card analysis-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Analysis on {{ item.timestamp|date:"F d, Y" }}</h5>
+                        <p class="card-text">{{ item.input_text|truncatechars:100 }}</p>
+                        <a href="#" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
 
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if items.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; first</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">previous</a></li>
+                {% endif %}
 
-<h1>Bonjour {{user.username}}</h1>
+                <li class="page-item disabled"><a class="page-link" href="#">Page {{ items.number }} of {{ items.paginator.num_pages }}</a></li>
 
-
-{% endblock body %}
+                {% if items.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ items.paginator.num_pages }}">last &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <p class="text-center">No recent analyses available. Start by creating a new analysis!</p>
+    {% endif %}
+{% else %}
+    <div class="text-center">
+        <p>Please log in or register to start analyzing text.</p>
+        <a href="{% url 'login' %}" class="btn btn-primary me-2">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-secondary">Register</a>
+    </div>
+{% endif %}
+{% endblock content %}
