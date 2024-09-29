@@ -8,4 +8,5 @@ import scrapy
 
 class ArticleScrapperItem(scrapy.Item):
     # define the fields for your item here like:
+    title = scrapy.Field()
     main_txt = scrapy.Field()

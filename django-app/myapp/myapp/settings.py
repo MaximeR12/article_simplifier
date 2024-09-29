@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(find_dotenv())
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
-DEBUG = True #os.getenv("DJANGO_DEBUG") == "True" 
+DEBUG = os.getenv("DJANGO_DEBUG") == "True" 
 DJANGO_USE_DATABASE =  os.getenv("DJANGO_USE_DATABASE")=="True"
 
 ALLOWED_HOSTS = ["*"]

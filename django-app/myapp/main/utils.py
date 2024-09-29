@@ -7,10 +7,8 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-LLM_API_URL = os.getenv("LLM_API_URL", "http://mrowell-llm-api.francecentral.azurecontainer.io:8001")
+LLM_API_URL = os.getenv("LLM_API_URL")
 LLM_API_TOKEN = os.getenv("LLM_API_TOKEN")
-# DB_API_URL = os.getenv("DB_API_URL", "http://mrowell-db-api.francecentral.azurecontainer.io:8000")
-# DB_API_TOKEN = os.getenv("DB_API_TOKEN")
 
 def llm_api_call(input_text, output_language):
     payload = {

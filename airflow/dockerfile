@@ -35,7 +35,7 @@ RUN airflow db init
 # Create a default admin user (you can change the username and password as needed)
 RUN airflow users create \
     --username admin \
-    --password admin \
+    --password "${AIRFLOW_ADMIN_PASSWORD:-admin}" \
     --firstname Admin \
     --lastname User \
     --role Admin \

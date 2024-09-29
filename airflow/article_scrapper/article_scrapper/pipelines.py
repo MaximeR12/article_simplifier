@@ -10,4 +10,11 @@ from itemadapter import ItemAdapter
 
 class ArticleScrapperPipeline:
     def process_item(self, item, spider):
-        return item
+        # Ensure the item matches the structure expected by the database
+        formatted_item = {
+            "source": spider.name,
+            "title": item.get("title", ""),
+            "content": item.get("main_txt", ""),
+            "language": item.get("language", "fr"),
+        }
+        return formatted_item

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+import subprocess
 
 # Define the default arguments for the DAG
 default_args = {
@@ -13,14 +14,16 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
+def run_api_call():
+    subprocess.run(["python", "/opt/airflow/mediastack_api_call/api_call.py"], check=True)
 
 with DAG(
     'articles_api',
     default_args=default_args,
-    schedule_interval='0 8 * * 1',
+    schedule_interval='0 8 * * *',  # Run every day at 8:00 AM UTC+2
     catchup=False,
 ) as dag:
-            api_request = BashOperator(
-                    task_id = "api_request",
-                    bash_command= "cd /opt/airflow/mediastack_api_call && python api_call.py",
-            )
+    api_request = PythonOperator(
+        task_id='api_request',
+        python_callable=run_api_call
+    )

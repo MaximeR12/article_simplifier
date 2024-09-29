@@ -1,5 +1,5 @@
-import psycopg2
 import os
+from psycopg2 import connect
 from fastapi import FastAPI, HTTPException, Depends, Header
 from pydantic import BaseModel
 from typing import Optional
@@ -18,7 +18,7 @@ def verify_token(x_token: str = Header(...)):
 
 # Establish a connection to the database
 try:
-    connection = psycopg2.connect(
+    connection = connect(
         dbname=db_name,
         user=db_user,
         password=db_password,
@@ -70,7 +70,6 @@ async def create_analysis(analysis: Analysis):
     else:
         raise HTTPException(status_code=500, detail="Database connection not available")
 
-# Get all analyses (READ)
 @app.get("/analysis/", dependencies=[Depends(verify_token)])
 async def get_analyses():
     if cursor:
@@ -80,7 +79,6 @@ async def get_analyses():
     else:
         raise HTTPException(status_code=500, detail="Database connection not available")
 
-# Get a specific analysis by ID (READ)
 @app.get("/analysis/{analysis_id}", dependencies=[Depends(verify_token)])
 async def get_analysis(analysis_id: int):
     if cursor:
@@ -92,7 +90,6 @@ async def get_analysis(analysis_id: int):
     else:
         raise HTTPException(status_code=500, detail="Database connection not available")
 
-# Update a specific analysis by ID (UPDATE)
 @app.put("/analysis/{analysis_id}", dependencies=[Depends(verify_token)])
 async def update_analysis(analysis_id: int, analysis: Analysis):
     if cursor:
@@ -106,7 +103,6 @@ async def update_analysis(analysis_id: int, analysis: Analysis):
     else:
         raise HTTPException(status_code=500, detail="Database connection not available")
 
-# Delete a specific analysis by ID (DELETE)
 @app.delete("/analysis/{analysis_id}", dependencies=[Depends(verify_token)])
 async def delete_analysis(analysis_id: int):
     if cursor:
@@ -116,7 +112,6 @@ async def delete_analysis(analysis_id: int):
     else:
         raise HTTPException(status_code=500, detail="Database connection not available")
 
-# Create a new article (CREATE)
 @app.post("/article/", dependencies=[Depends(verify_token)])
 async def create_article(article: Article):
     if cursor:

@@ -1,69 +1,112 @@
-# FastAPI Script Analyzer
+# Ollama LLM Model API
 
-This repository contains scripts for analyzing SQL scripts using FastAPI and the Ollama library.
+This repository contains a FastAPI application for analyzing articles using the Ollama LLM model.
 
-## Getting Started
+## Overview
 
-To get started, follow these instructions:
+The API provides endpoints for analyzing articles, managing tokens, and health checks. It uses the Ollama library for language model interactions and logs the analysis results to a database.
+
+## Setup Instructions
+
+### Prerequisites
+
+- Python 3.9 or higher
+- Docker (optional, for containerized deployment)
+
+### Installation
 
 1. **Clone the repository:**
     ```sh
     git clone git@github.com:MaximeR12/LLM-API.git
+    cd LLM-API
     ```
 
 2. **Install dependencies:**
     ```sh
-    pip install -r requirements.txt
+    pip install -r llmrequirements.txt
     ```
 
-3. **Create a token:**
-    You'll need a token to authenticate requests. Run the following command to generate a token:
-    ```sh
-    python create_token.py <username>
+3. **Set up environment variables:**
+    Create a `.env` file in the `llm-api` directory with the following content:
+    ```env
+    OLLAMA_MODEL=llama3.2:3b
+    DB_API_URL=http://localhost:8000
+    DB_API_TOKEN=your_db_api_token
+    ADMIN_TOKEN=your_admin_token
     ```
 
 4. **Run the FastAPI server:**
     ```sh
-    uvicorn main:app --reload
+    uvicorn main.main:app --host 0.0.0.0 --port 8001 --reload
     ```
 
-## Scripts
+### Docker Deployment
 
-### `main.py`
+1. **Build the Docker image:**
+    ```sh
+    docker build -t ollama-llm-api .
+    ```
 
-This script sets up a FastAPI app to analyze SQL scripts. It defines routes for analyzing scripts and authenticating users using tokens.
+2. **Run the Docker container:**
+    ```sh
+    docker run -d -p 8001:8001 --env-file .env ollama-llm-api
+    ```
 
-### `create_token.py`
+## API Endpoints
 
-This script generates a token for a given username. Tokens are used for authentication when accessing the FastAPI endpoints.
+### Analyze Article
 
-### `test_api.py`
+- **URL:** `/article_analyse`
+- **Method:** `POST`
+- **Description:** Analyzes an article and translates the summary into the specified language.
+- **Request Body:**
+    ```json
+    {
+        "article": "string",
+        "language": "string"
+    }
+    ```
+- **Response:**
+    ```json
+    {
+        "summary": "string"
+    }
+    ```
 
-This script contains unit tests for the FastAPI endpoints. It includes tests for script analysis and token generation.
+### Create Token
 
-## Usage
+- **URL:** `/create_token`
+- **Method:** `POST`
+- **Description:** Creates a new token for a user.
+- **Request Body:**
+    ```json
+    {
+        "admin_token": "string",
+        "user_id": "string"
+    }
+    ```
+- **Response:**
+    ```json
+    {
+        "token": "string"
+    }
+    ```
 
-### Analyzing a Script
+### Health Check
 
-To analyze a script, send a POST request to `/script_analyse` with a JSON body containing the script and a valid token in the Authorization header.
+- **URL:** `/health`
+- **Method:** `GET`
+- **Description:** Checks the health status of the API.
+- **Response:**
+    ```json
+    {
+        "status": "healthy"
+    }
+    ```
 
-Example request:
-```json
-{
-  "script": "INSERT INTO test_target FROM test_source"
-}
-```
-## Running Tests
+## Logging
 
-To run the unit tests, execute the following command:
-
-```sh
-python test_api.py
-```
-
-## Contributing
-
-Contributions are welcome! If you have any suggestions or improvements, feel free to open an issue or submit a pull request.
+The application logs various events and errors. Logs are sent to the database using the `send_logs_to_db` function.
 
 ## License
 

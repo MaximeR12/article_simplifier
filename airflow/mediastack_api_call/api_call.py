@@ -1,12 +1,36 @@
 import requests
 import os
-import json
+import logging
+import sqlite3
 
-# Replace 'YOUR_API_KEY' with your actual Mediastack API key
+def insert_article_to_sqlite(article):
+    conn = sqlite3.connect('/opt/airflow/airflow.db')
+    cursor = conn.cursor()
+    
+    # Create table if not exists
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS api_articles (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        source TEXT,
+        title TEXT,
+        content TEXT,
+        language TEXT
+    )
+    ''')
+    
+    # Insert data
+    cursor.execute('''
+    INSERT INTO api_articles (source, title, content, language) 
+    VALUES (?, ?, ?, ?)
+    ''', (f"Mediastack_{article['source']}", article.get('title', ''), article.get('description', ''), article.get('language', '')))
+    
+    conn.commit()
+    conn.close()
+
 api_key = '23bad5487cd57f506aeb4f15abd709f8'
 params = {
     'access_key': api_key,
-    'languages': 'fr',  # Fetch news in French
+    'languages': 'fr,en,de,it,pt,hi,es',  # Fetch news in llm's supported languages
     'limit': 10,  # Limit the results to 10 articles
 }
 
@@ -16,24 +40,15 @@ url = 'http://api.mediastack.com/v1/news'
 # Make the API request
 response = requests.get(url, params=params)
 
+print(response.json())
 # Check if the request was successful
 if response.status_code == 200:
     # Parse the JSON response
     data = response.json()
-    
-    # Folder where the JSON file will be saved
-    folder_name = '../data/raw'
-    
-    # Ensure the 'data' folder exists
-    os.makedirs(folder_name, exist_ok=True)  # Creates the folder if it doesn't exist, does nothing otherwise
-    
-    # Path to the JSON file within the 'data' folder
-    json_file_path = os.path.join(folder_name, 'news_articles.json')
-
-    # Save the data to a JSON file
-    with open(json_file_path, 'w', encoding='utf-8') as jsonfile:
-        json.dump(data, jsonfile, ensure_ascii=False, indent=4)
-
-    print(f"The JSON file was saved successfully at {json_file_path}.")
+    for article in data['data']:
+        try:
+            insert_article_to_sqlite(article)
+        except Exception as e:
+            logging.error(f"Failed to insert article to SQLite: {e}")
 else:
-    print("Failed to fetch data from Mediastack API, status code:", response.status_code)
+    logging.error(f"Failed to fetch news from Mediastack: {response.json()}")

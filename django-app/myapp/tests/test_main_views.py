@@ -7,8 +7,25 @@ from django.contrib.auth.models import User
 def client():
     return Client()
 
-def test_homepeage_view(client):
+@pytest.fixture
+def user():
+    return User.objects.create_user(username='testuser', password='12345')
+
+def test_homepage_view(client):
     url = reverse("homepage")
     response = client.get(url)
     assert response.status_code == 200
     assert "homepage.html" in [t.name for t in response.templates]
+
+def test_analysis_view_authenticated(client, user):
+    client.login(username='testuser', password='12345')
+    url = reverse("analysis")
+    response = client.get(url)
+    assert response.status_code == 200
+    assert "analysis.html" in [t.name for t in response.templates]
+
+def test_analysis_view_unauthenticated(client):
+    url = reverse("analysis")
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith('/login/')

@@ -13,14 +13,13 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-
 with DAG(
     'articles_scrapping',
     default_args=default_args,
-    schedule_interval='0 8 * * 1',
+    schedule_interval='0 8 * * *',  # Run every day at 8:00 AM UTC+2
     catchup=False,
 ) as dag:
-            scrapping_upcoming = BashOperator(
-                    task_id = "figaro_articles_scrapper",
-                    bash_command = 'cd /opt/airflow/article_scrapper && scrapy crawl figarospider',
-            )
+    scrapping_upcoming = BashOperator(
+        task_id = "figaro_articles_scrapper",
+        bash_command = 'cd /opt/airflow/article_scrapper && scrapy crawl figarospider',
+    )
