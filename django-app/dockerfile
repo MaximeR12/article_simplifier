@@ -13,5 +13,5 @@ COPY . /django-app
 # Remove the WORKDIR change, as it's already set to /django-app
 # WORKDIR /django-app/myapp
 
-EXPOSE 8002
+EXPOSE 8000
 CMD ["gunicorn", "--config", "django_guni_config.py", "myapp.wsgi:application"]

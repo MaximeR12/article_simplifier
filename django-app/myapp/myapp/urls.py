@@ -20,12 +20,13 @@ from main import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.homepage, name='homepage'),
+    path('homepage/', views.homepage, name='homepage'),
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
     path('register/', views.register_user, name='register'),
     path('profile/', views.user_profile, name='user_profile'),
-    path('analysis/', views.analysis, name='analysis')
+    path('analysis/', views.analysis, name='analysis'),
+    path('', include('django_prometheus.urls')),
 ]
 
 if settings.DEBUG:
