@@ -1,0 +1,283 @@
+/* Variables */
+:root {
+  --primary-color: #1e9ec1; /* Pastel blue */
+  --primary-dark: #00469b; /* Darker pastel blue */
+  --secondary-color: #ffffff; /* Pastel pink */
+  --background-color: #d1f6ff; /* Pastel cream */
+  --text-color: #00469b; /* Soft gray */
+  --accent-color: #013692; /* Pastel orange */
+  --footer-bg-color: var(--primary-color);
+  --footer-text-color: #ffffff;
+  --background-gradient: linear-gradient(135deg, #fef6e4 0%, #e8e8e8 100%); /* Light gradient */
+}
+
+/* Base Styles */
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background: var(--background-gradient);
+  color: var(--text-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: background 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  margin-bottom: 1.5rem; /* Increased margin */
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  text-align: center;
+  margin-top: 2.5rem; /* Increased margin */
+}
+
+/* Layout */
+.container {
+  flex: 1;
+  padding: 30px; /* Increased padding */
+}
+
+main {
+  flex: 1;
+  padding: 30px; /* Increased padding */
+}
+
+/* Header and Navigation */
+.navbar {
+  background-color: var(--primary-color) !important;
+  padding: 1.5rem 0; /* Increased padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: var(--footer-text-color);
+  font-weight: bold;
+  font-size: 1rem;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: var(--secondary-color);
+  transform: translateY(-2px); /* Added hover effect */
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+nav ul li {
+  margin: 0 1.5rem; /* Increased margin */
+  margin: 0 1rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--footer-text-color);
+  font-weight: bold;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: var(--secondary-color);
+}
+
+/* Forms */
+.form-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(168, 213, 226, 0.2); /* Adjusted shadow color */
+}
+
+#id_input_text {
+  min-height: 150px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  background-color: var(--accent-color);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Alerts */
+.alert {
+  padding: 20px;
+  background-color: var(--accent-color);
+  color: white;
+  margin-bottom: 15px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+/* Cards */
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer */
+.footercont {
+  background-color: var(--footer-bg-color);
+  color: var(--footer-text-color);
+  padding: 1rem 0;
+  text-align: center;
+  margin-top: auto;
+  font-size: 0.9rem;
+}
+
+.footer-title {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--secondary-color);
+  font-weight: bold;
+}
+
+.footercont p {
+  margin-bottom: 0.25rem;
+}
+
+.footer-links {
+  margin-top: 0.5rem;
+}
+
+.footer-links a {
+  color: var(--footer-text-color);
+  text-decoration: none;
+  margin: 0 0.5rem;
+  transition: color 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.footer-links a:hover {
+  color: var(--secondary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  nav ul {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  nav ul li {
+    margin: 0.5rem 0;
+  }
+}
+
+/* New styles for improved UI */
+.navbar-brand {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: var(--footer-text-color);
+}
+
+.form-control:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(247, 202, 201, 0.25); /* Adjusted shadow color */
+}
+
+/* Analysis History Styles */
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-group-item div {
+    max-width: 80%;
+}
+
+.btn-secondary {
+    font-size: 0.8rem;
+}

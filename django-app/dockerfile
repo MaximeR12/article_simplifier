@@ -1,0 +1,17 @@
+FROM python:3.10.9 
+
+WORKDIR /django-app  
+
+# Copy the djangorequirements.txt file from the current directory
+COPY djangorequirements.txt /django-app/requirements.txt
+
+RUN pip install -r requirements.txt  
+
+# Copy the django-app contents
+COPY . /django-app
+
+# Collect static files
+RUN python myapp/manage.py collectstatic --noinput
+
+EXPOSE 8002
+CMD ["gunicorn", "--config", "django_guni_config.py", "myapp.wsgi:application"]

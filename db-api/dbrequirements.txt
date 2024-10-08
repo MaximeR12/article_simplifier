@@ -1,0 +1,17 @@
+fastapi==0.110.2
+uvicorn==0.27.1
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+pandas==2.2.0
+pydantic==2.6.1
+pydantic_core==2.16.2
+pydantic-extra-types==2.5.0
+pydantic-settings==2.2.1
+SQLAlchemy==2.0.27
+python-dotenv==1.0.1
+pytest==8.0.1
+pytest-asyncio==0.23.5
+pytest-mock==3.14.0
+pyodbc==5.0.1
+typing_extensions==4.9.0
+typing-inspect==0.9.0
