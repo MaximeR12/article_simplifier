@@ -26,6 +26,7 @@ urlpatterns = [
     path('register/', views.register_user, name='register'),
     path('profile/', views.user_profile, name='user_profile'),
     path('analysis/', views.analysis, name='analysis'),
+    path('analysis/<int:analysis_id>/', views.analysis_detail, name='analysis_detail'),  # New URL pattern
     path('', include('django_prometheus.urls')),
 ]
 

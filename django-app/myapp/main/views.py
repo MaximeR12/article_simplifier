@@ -1,23 +1,16 @@
-import os
 import logging
-from django import template
-from django.urls import reverse
-from django.http import JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
-from asgiref.sync import sync_to_async
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import TextAnalysisForm
 from .utils import llm_api_call
 from .models import Analysis
 
 from dotenv import load_dotenv
 load_dotenv()
-
-
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 logger = logging.getLogger(__name__)
 
@@ -55,17 +48,37 @@ def register_user(request):
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 @login_required
 def user_profile(request):
+    user = request.user
+    analyses_list = Analysis.objects.filter(user=user).order_by('-timestamp')
+
+    # Pagination
+    page = request.GET.get('page', 1)
+    paginator = Paginator(analyses_list, 5)  # Show 5 analyses per page
+
+    try:
+        analyses = paginator.page(page)
+    except PageNotAnInteger:
+        analyses = paginator.page(1)
+    except EmptyPage:
+        analyses = paginator.page(paginator.num_pages)
+
     if request.method == 'POST':
-        user = request.user
         user.first_name = request.POST.get('first_name', '')
         user.last_name = request.POST.get('last_name', '')
         user.email = request.POST.get('email', '')
         user.save()
         messages.success(request, "Profile updated successfully")
         return redirect('user_profile')
-    return render(request, 'profile.html', {'user': request.user})
+    
+    context = {
+        'user': user,
+        'analyses': analyses
+    }
+    return render(request, 'profile.html', context)
 
 @login_required
 def analysis(request):
@@ -92,3 +105,15 @@ def analysis(request):
     else:
         form = TextAnalysisForm()
     return render(request, 'analysis.html', {'form': form})
+
+@login_required
+def analysis_detail(request, analysis_id):
+    # Retrieve the specific Analysis object or return 404 if not found
+    analysis = get_object_or_404(Analysis, id=analysis_id, user=request.user)
+    
+    # Optionally, you can handle different statuses or additional context here
+
+    context = {
+        'analysis': analysis
+    }
+    return render(request, 'result.html', context)

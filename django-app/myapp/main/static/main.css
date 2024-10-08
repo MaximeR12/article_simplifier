@@ -266,3 +266,18 @@ nav a:hover {
   border-color: var(--secondary-color);
   box-shadow: 0 0 0 0.2rem rgba(247, 202, 201, 0.25); /* Adjusted shadow color */
 }
+
+/* Analysis History Styles */
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-group-item div {
+    max-width: 80%;
+}
+
+.btn-secondary {
+    font-size: 0.8rem;
+}
