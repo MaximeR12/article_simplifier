@@ -79,7 +79,7 @@ class FigaroSpider(CrawlSpider):
 
     def parse_item(self, response):
         item = ArticleScrapperItem()
-        item["title"] = response.css('h1.fig-headline.fig-pagination__hidden::text').get().strip()  # Extract the title from the h1 element
+        item["title"] = response.css('h1.fig-headline.fig-pagination__hidden::text').get().strip() 
         txt_raw = response.css('.fig-paragraph').getall()
         txt_cleaned = text_cleaner(txt_raw)
         item["main_txt"] = txt_cleaned

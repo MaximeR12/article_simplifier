@@ -2,33 +2,83 @@
 
 {% block title %}
 <title>User Profile</title>
-{% endblock %}
+{% endblock title%}
 
 {% block content %}
 <div class="container mt-5">
-    <div class="row justify-content-center">
+    <div class="row">
+        <!-- User Information -->
         <div class="col-md-6">
             <h2 class="mb-4">User Profile</h2>
             <form method="POST">
                 {% csrf_token %}
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" value="{{ user.username }}" class="form-control" readonly>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="first_name">First Name:</label>
                     <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" class="form-control">
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="last_name">Last Name:</label>
                     <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" class="form-control">
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" value="{{ user.email }}" class="form-control">
                 </div>
                 <button type="submit" class="btn btn-primary mt-3">Update Profile</button>
             </form>
+        </div>
+
+        <!-- Analysis History -->
+        <div class="col-md-6">
+            <h2 class="mb-4">Analysis History</h2>
+            {% if analyses %}
+                <ul class="list-group">
+                    {% for analysis in analyses %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ analysis.timestamp|date:"F d, Y H:i" }}</strong><br>
+                                {{ analysis.input_text|truncatechars:100 }}
+                            </div>
+                            <a href="{% url 'analysis_detail' analysis.id %}" class="btn btn-primary">View Details</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if analyses.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">&laquo; first</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ analyses.previous_page_number }}">previous</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">
+                                Page {{ analyses.number }} of {{ analyses.paginator.num_pages }}
+                            </a>
+                        </li>
+
+                        {% if analyses.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ analyses.next_page_number }}">next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ analyses.paginator.num_pages }}">last &raquo;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% else %}
+                <p>No analyses have been performed yet.</p>
+            {% endif %}
         </div>
     </div>
 </div>

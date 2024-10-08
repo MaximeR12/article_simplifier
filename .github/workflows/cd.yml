@@ -16,4 +16,3 @@ jobs:
 
     - name: Hello World Deployment
       run: echo "Hello World"
-

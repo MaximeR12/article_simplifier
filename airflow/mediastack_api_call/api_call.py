@@ -41,9 +41,8 @@ url = 'http://api.mediastack.com/v1/news'
 response = requests.get(url, params=params)
 
 print(response.json())
-# Check if the request was successful
 if response.status_code == 200:
-    # Parse the JSON response
+    # Get needed data from the JSON response
     data = response.json()
     for article in data['data']:
         try:

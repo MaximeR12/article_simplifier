@@ -1,13 +1,13 @@
 /* Variables */
 :root {
-  --primary-color: #a8d5e2; /* Pastel blue */
-  --primary-dark: #3f87a1; /* Darker pastel blue */
-  --secondary-color: #c9630f; /* Pastel pink */
-  --background-color: #fef6e4; /* Pastel cream */
-  --text-color: #5d5c61; /* Soft gray */
-  --accent-color: #c9630f; /* Pastel orange */
+  --primary-color: #1e9ec1; /* Pastel blue */
+  --primary-dark: #00469b; /* Darker pastel blue */
+  --secondary-color: #ffffff; /* Pastel pink */
+  --background-color: #d1f6ff; /* Pastel cream */
+  --text-color: #00469b; /* Soft gray */
+  --accent-color: #013692; /* Pastel orange */
   --footer-bg-color: var(--primary-color);
-  --footer-text-color: var(--text-color);
+  --footer-text-color: #ffffff;
   --background-gradient: linear-gradient(135deg, #fef6e4 0%, #e8e8e8 100%); /* Light gradient */
 }
 
@@ -32,7 +32,7 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 2.5rem;
-  color: var(--text-color);
+  color: var(--primary-color);
   text-align: center;
   margin-top: 2.5rem; /* Increased margin */
 }
@@ -57,7 +57,7 @@ main {
 }
 
 .navbar-dark .navbar-nav .nav-link {
-  color: var(--text-color);
+  color: var(--footer-text-color);
   font-weight: bold;
   font-size: 1rem;
   transition: color 0.3s ease, transform 0.2s ease;
@@ -83,7 +83,7 @@ nav ul li {
 
 nav a {
   text-decoration: none;
-  color: var(--text-color);
+  color: var(--footer-text-color);
   font-weight: bold;
   font-size: 1rem;
   transition: color 0.3s ease;
@@ -145,7 +145,7 @@ nav a:hover {
   text-align: center;
   text-decoration: none;
   color: #fff;
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -259,10 +259,25 @@ nav a:hover {
 .navbar-brand {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  color: var(--secondary-color) !important;
+  color: var(--footer-text-color);
 }
 
 .form-control:focus {
   border-color: var(--secondary-color);
   box-shadow: 0 0 0 0.2rem rgba(247, 202, 201, 0.25); /* Adjusted shadow color */
+}
+
+/* Analysis History Styles */
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-group-item div {
+    max-width: 80%;
+}
+
+.btn-secondary {
+    font-size: 0.8rem;
 }
