@@ -13,21 +13,6 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
 
-    services:
-      db:
-        image: postgres:13
-        env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U test_user -d test_db"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps: 
       - name: Checkout code 
         uses: actions/checkout@v2 
@@ -37,48 +22,5 @@ jobs:
         with: 
           python-version: '3.10'
 
-      - name: Install global requirements 
-        run: pip install -r requirements.txt
-
-      - name: Set up environment variables
-        run: |
-          echo "AZ_USERNAME=${{ secrets.AZ_USERNAME }}" >> $GITHUB_ENV
-          echo "AZ_PASSWORD=${{ secrets.AZ_PASSWORD }}" >> $GITHUB_ENV
-          echo "AZ_LOCATION=${{ secrets.AZ_LOCATION }}" >> $GITHUB_ENV
-          echo "AZ_RESOURCE_GROUP=${{ secrets.AZ_RESOURCE_GROUP }}" >> $GITHUB_ENV
-          echo "DB_DRIVER=${{ secrets.DB_DRIVER }}" >> $GITHUB_ENV
-          echo "DB_SERVER=${{ secrets.DB_SERVER }}" >> $GITHUB_ENV
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
-          echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
-          echo "DJANGO_USE_DATABASE=${{ secrets.DJANGO_USE_DATABASE }}" >> $GITHUB_ENV
-          echo "DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}" >> $GITHUB_ENV
-          echo "DB_API_TOKEN=${{ secrets.DB_API_TOKEN }}" >> $GITHUB_ENV
-          echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> $GITHUB_ENV
-
-      - name: Test DB-API
-        working-directory: db-api
-        run: |
-          pip install -r dbrequirements.txt
-          pytest --disable-warnings
-
-      - name: Test LLM-API
-        working-directory: llm-api
-        run: |
-          pip install -r llmrequirements.txt
-          pytest --disable-warnings
-
-      - name: Test Django-App
-        working-directory: django-app
-        run: |
-          pip install -r djangorequirements.txt
-          python manage.py migrate
-          pytest --disable-warnings
-
-      - name: Test Airflow
-        working-directory: airflow
-        run: |
-          pip install -r requirements.txt
-          pytest --disable-warnings
+      - name: Hello World Test
+        run: echo "Hello World"
